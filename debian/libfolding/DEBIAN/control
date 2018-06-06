@@ -1,0 +1,11 @@
+Package: libfolding
+Version: 1.0-1
+Architecture: amd64
+Maintainer: asr <alban.siffer@irisa.fr>
+Installed-Size: 298
+Depends: libtbb, libarmadillo, libarmadillo8 (>= 1:8.400.0+dfsg), libc6 (>= 2.14), libgcc1 (>= 1:3.0), libstdc++6 (>= 5.2), libtbb2
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/asiffer/libfolding
+Description: C++ library to compute the folding test of unimodality over streaming data - exec files

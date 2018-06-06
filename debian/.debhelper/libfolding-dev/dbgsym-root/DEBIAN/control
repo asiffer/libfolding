@@ -1,0 +1,14 @@
+Package: libfolding-dev-dbgsym
+Package-Type: ddeb
+Source: libfolding
+Version: 1.0-1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: asr <alban.siffer@irisa.fr>
+Installed-Size: 85
+Depends: libfolding-dev (= 1.0-1)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for libfolding-dev
+Build-Ids: 477a58881c7974fbf2d517871e2d4d396280915f

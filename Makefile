@@ -36,7 +36,7 @@ INSTALL_LIB_DIR = $(DESTDIR)/usr/lib
 EXPORT = @export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIB_DIR)
 
 # compiler & flags
-CXX = @g++
+CXX = @c++
 CXXFLAGS = -std=c++11 -Wall -pedantic
 LFLAGS = -L/usr/lib -L/usr/lib/x86_64-linux-gnu -ltbb -larmadillo
 
@@ -88,12 +88,25 @@ $(TARGET): $(OBJS)
 	$(EXPORT); $(TEST_DIR)/$@
 
 
+
+## INSTALL
+install:
+	@echo "Checking the headers installation directory ("$(INSTALL_HEAD_DIR)")"
+	@mkdir -p $(INSTALL_HEAD_DIR)
+	@echo "Checking the library installation directory ("$(INSTALL_LIB_DIR)")"
+	@mkdir -p $(INSTALL_LIB_DIR)
+	@echo "Installing the shared library ("$(TARGET)")"
+	@install -t $(INSTALL_LIB_DIR) $(LIB_DIR)/*.so
+	@echo "Installing the headers"
+	@install -t $(INSTALL_HEAD_DIR) $(INC_DIR)/*.h
+	@echo "[done]"
+
 test_header:
 	@echo
 	@echo "[Testing]"
 
 
-test: perf.run
+test: mvnorm_uni.run norm_multi.run perf.run
 
 clean:
 	@rm -rfd $(OBJ_DIR)

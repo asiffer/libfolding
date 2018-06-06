@@ -45,7 +45,7 @@ int main(int argc, const char *argv[]) {
     arma::arma_rng::set_seed_random();
 
     const size_t N = 1000000;
-    const size_t max_dim = 5;
+    const size_t max_dim = 3;
 
     const int w = 15;
     cout << left;

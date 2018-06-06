@@ -1,0 +1,5 @@
+libfolding (1.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- asr <alban.siffer@irisa.fr>  Wed, 06 Jun 2018 15:51:50 +0200
