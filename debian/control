@@ -1,7 +1,7 @@
 Source: libfolding
 Priority: optional
 Maintainer: asr <alban.siffer@irisa.fr>
-Build-Depends: debhelper (>= 10)
+Build-Depends: debhelper (>= 10), libtbb-dev, libarmadillo-dev
 Standards-Version: 4.1.2
 Section: libs
 Homepage: https://github.com/asiffer/libfolding
