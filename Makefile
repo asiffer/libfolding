@@ -44,7 +44,7 @@ LFLAGS = -L/usr/lib -L/usr/lib/x86_64-linux-gnu -ltbb -larmadillo
 FILES = pivot.h armaring.h streamfolding.h
 DEPS = $(foreach n,$(FILES),$(INC_DIR)/$(n))
 SRCS = $(foreach n,$(FILES:.h=.cpp),$(SRC_DIR)/$(n)) $(SRC_DIR)/interface.cpp
-OBJS = $(FILES:.h=.o)
+OBJS = $(FILES:.h=.o) interface.o
 
 
 # library file
@@ -112,3 +112,5 @@ clean:
 	@rm -rfd $(OBJ_DIR)
 	@rm -rfd $(LIB_DIR)
 	@rm -rf $(TEST_DIR)/*.run
+
+
