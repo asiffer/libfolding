@@ -1,2 +1,2 @@
-debian/tmp/usr/lib/lib*.so usr/lib/*.so
-debian/tmp/usr/include/libfolding/*.h usr/include/libfolding/*.h
+debian/tmp/usr/lib/lib*.so usr/lib
+debian/tmp/usr/include/libfolding/*.h usr/include/libfolding
