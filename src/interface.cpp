@@ -26,6 +26,7 @@ extern "C" {
 		return sf->folding_test(unimodal, p_value);
 	}
 	
+	/*
 	double * sf_mean(StreamFolding * sf) {
 		return sf->mean().memptr();
 	}
@@ -41,6 +42,21 @@ extern "C" {
 	double * sf_dump(StreamFolding * sf) {
 		return sf->dump().memptr();
 	}
+	*/
+	void sf_mean(StreamFolding * sf, double * output) {
+		output = sf->mean().memptr();
+	}
 	
+	void sf_cov(StreamFolding * sf, double * output) {
+		output = sf->cov().memptr();
+	}
+	
+	void sf_s2star(StreamFolding * sf, double * output) {
+		output = sf->s2star().memptr();
+	}
+	
+	void sf_dump(StreamFolding * sf, double * output) {
+		output = sf->dump().memptr();
+	}
 }
 
