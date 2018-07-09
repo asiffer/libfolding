@@ -22,41 +22,51 @@ extern "C" {
 		return sf->is_initialized();
 	}
 	
-	double sf_folding_test(StreamFolding * sf, bool *unimodal, double *p_value) {
-		return sf->folding_test(unimodal, p_value);
+	void sf_folding_test(StreamFolding * sf, bool *unimodal, double *p_value, double * Phi) {
+		*Phi = sf->folding_test(unimodal, p_value);
 	}
 	
-	/*
-	double * sf_mean(StreamFolding * sf) {
-		return sf->mean().memptr();
-	}
-	
-	double * sf_cov(StreamFolding * sf) {
-		return sf->cov().memptr();
-	}
-	
-	double * sf_s2star(StreamFolding * sf) {
-		return sf->s2star().memptr();
-	}
-	
-	double * sf_dump(StreamFolding * sf) {
-		return sf->dump().memptr();
-	}
-	*/
+
 	void sf_mean(StreamFolding * sf, double * output) {
-		output = sf->mean().memptr();
+		arma::vec m = sf->mean();
+		for(unsigned int i = 0; i<m.size(); i++) {
+			output[i] = m[i];	
+		}
 	}
+	
 	
 	void sf_cov(StreamFolding * sf, double * output) {
-		output = sf->cov().memptr();
+		arma::mat c = sf->cov();
+		int d = c.n_rows;
+		int k = 0;
+		for(int i = 0; i<d; i++) {
+			for(int j = 0; j<d; j++) {
+				output[k] = c(i,j);
+				k++;
+			}
+		}
 	}
+	
 	
 	void sf_s2star(StreamFolding * sf, double * output) {
-		output = sf->s2star().memptr();
+		arma::vec s = sf->s2star();
+		for(unsigned int i = 0; i<s.size(); i++) {
+			output[i] = s[i];	
+		}
 	}
 	
+	
 	void sf_dump(StreamFolding * sf, double * output) {
-		output = sf->dump().memptr();
+		arma::mat X = sf->dump();
+		int n = X.n_rows;
+		int p = X.n_cols;
+		int k = 0;
+		for(int i = 0; i<n; i++) {
+			for(int j = 0; j<p; j++) {
+				output[k] = X(i,j);
+				k++;
+			}
+		}
 	}
 }
 
