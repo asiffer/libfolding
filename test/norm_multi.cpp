@@ -1,4 +1,4 @@
-#include "streamfolding.h"
+#include "folding.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -39,7 +39,7 @@ int main(int argc, const char *argv[]) {
 
 
     cout << std::fixed << std::setprecision(2);
-    cout << endl << UNDERLINE << "Testing on a bi-normal distribution" << END << endl;
+    cout << endl << UNDERLINE << "Testing on a bi-normal distribution (stream)" << END << endl;
     cout << "Mode 1 : µ = " << M1 << ", σ = 1.0, #pts = " << N1 << " (" << (100. * N1 / N) << "%)" << endl;
     cout << "Mode 2 : µ = " << M2 << ", σ = 1.0, #pts = " << N2 << " (" << (100. * N2 / N) << "%)" << endl;
     //cout << "Size of Xinit : " << Xinit.n_rows << " x " << Xinit.n_cols << endl;

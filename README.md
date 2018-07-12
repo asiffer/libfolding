@@ -55,54 +55,25 @@ sudo apt install libfolding-dev
 
 ### Examples
 
-#### Univariate normal random sample
+#### Univariate normal random sample (batch)
+
+In this example, we perform the folding test of unimodality 
+on a centred gaussian sample with standard deviation 5.
+
 ```c++
 #include "folding.h"
 
-```
-
-#### Multivariate normal random sample
-```c++
-#include "streamfolding.h"
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-
-#define UNDERLINE "\033[4m"
-#define END  "\x1B[0m"
-
-int main(int argc, const char *argv[]) {
+int main(int argc, const char * argv[]) {
     arma::arma_rng::set_seed_random();
 
-    const int N = 5000;
-    const int d = 2;
-
-    arma::mat Cov = 0.5 * arma::ones(d, d) + 0.5 * arma::eye(d, d); // covariance matrix
-    arma::vec Mean(d, arma::fill::zeros); // mean vector
-    arma::mat Xinit = arma::mvnrnd(Mean, Cov, N); // size d x N
-
-    const size_t window_size = 2000;
-    StreamFolding sf(window_size); // initialization
-
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << endl << UNDERLINE << "Testing on a multivariate normal distribution" << END << std::endl;
-    std::cout << "Dimension d = " << d << ", #pts = " << N << std::endl;
-    Mean.print("Mean");
-    Cov.print("Covariance matrix");
-
-    // Add new data (update the object)
-    for (size_t i = 0; i < N; i++) {
-        sf.update(Xinit.col(i));
-    }
+    size_t N = 10000;
+    double mean = 0.0;
+    double std = 5.0;
+    arma::rowvec X = std * arma::randn(1, N) + mean;
     
-    // Folding test
-    bool uni;
-    double pvalue;
-    cout << "Folding Statistics : " << sf.folding_test(&uni, &pvalue) << endl;
-    cout << std::scientific;
-    stringstream ss;
-    ss << "Unimodal ? " << (uni ? "Yes" : "No") << " (p-value: " << pvalue << ")";
-    std::cout << setw(40) << ss.str() << std::endl;
+    BatchFolding bf(X);
+    bf.print();
+    return 0;
 }
 ```
 
@@ -113,83 +84,163 @@ g++ -std=c++11 -Wall -pedantic -I/usr/include/libfolding main.cpp -o example -lf
 
 Finally, if you run this example, you can check that the test outputs well that the distribution is unimodal.
 ```shell
-./example
-Testing on a multivariate normal distribution
-Dimension d = 2, #pts = 5000
-Mean
-        0
-        0
-Covariance matrix
-   1.0000   0.5000
-   0.5000   1.0000
-Folding Statistics : 2.94
-   Unimodal ? Yes (p-value: 9.09495e-13)
-
+$ ./example
+Folding Test of Unimodality
+Number of observations: 10000 (dim: 1)
+Computation time: 1821 µs (~ 5491488 it/s)
+Folding Statistics: 1.444
+	The distribution is then unimodal (with p-value: 4.370e-02)
+Folding pivot
+  -0.1214
 ```
 
+#### Drifting mode
 
+Here we consider a streaming example. Data are under two modes which are initially at the same position (0).
+Then a mode drifts to the right while the other one remains the same. In this example, data are initially 
+unimodal and become multimodal.
 
-#### Bi-normal univariate random sample
+The object `StreamFolding` is designed to carry out the folding test of unimodality within a sliding window.
+At any time we can do the test and check how the data behave.
+
 
 ```c++
-#include "streamfolding.h"
+#include "folding.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <random>
 
-#define UNDERLINE "\033[4m"
-#define END  "\x1B[0m"
+
+arma::mat binormal_with_drift(size_t N, double ratio = 0.5, double speed = 1e-3) {
+    // random device
+    std::random_device rd;
+    std::default_random_engine gen(rd());
+    std::uniform_real_distribution<double> u(0, 1);
+
+    // fill the data
+    arma::mat X(1, N, arma::fill::zeros);
+    for (size_t i = 0; i < N; i++) {
+        X.col(i) = arma::randn(1, 1); // N(0,1) -> first mode (fixed)
+        if (u(gen) < ratio) {
+            X.col(i) += speed * i; // N(speed*i , 1) -> second mode (drifting)
+        }
+    }
+
+    return X;
+}
+
 
 int main(int argc, const char *argv[]) {
+
     arma::arma_rng::set_seed_random();
-    
-    const int d = 1;
-    
-    const size_t N1 = 2000;
-    const size_t N2 = 8000;
-    size_t N = N1 + N2;
-    
-    const double M1 = 0.0;
-    const double M2 = 5.0;
-    
-    arma::vec X1 = arma::randn(N1, d) + M1;
-    arma::vec X2 = arma::randn(N2, d) + M2;
-    
-    arma::vec Xinit = arma::join_cols(X1, X2); /// size d x (N1+N2)
-    
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << endl << UNDERLINE << "Testing on a bi-normal distribution" << END << std::endl;
-    std::cout << "Mode 1 : µ = " << M1 << ", σ = 1.0, #pts = " << N1 << " (" << (100. * N1 / N) << "%)" << std::endl;
-    std::cout << "Mode 2 : µ = " << M2 << ", σ = 1.0, #pts = " << N2 << " (" << (100. * N2 / N) << "%)" << std::endl;
-    
-    arma::rowvec X = arma::shuffle(Xinit).t();
-    
-    const size_t window_size = 5000;
-    StreamFolding sf(window_size);
-    
-    
+
+    size_t N = 100000;
+    double ratio = 0.5;
+    double speed = 1e-4;
+    size_t win_size = 2000;
+
+    arma::mat X = binormal_with_drift(N, ratio, speed);
+    StreamFolding sf(win_size);
+
+    double p;
+    double Phi;
+    bool u;
+    auto mod = (size_t) (N / 50);
+
+    const int wi = 9;
+    const int wphi = 8;
+    const int wp = 12;
+
+    std::cout << std::right;
+    std::cout << setw(wi) << "Iteration";
+    std::cout << setw(wphi) << "Phi";
+    std::cout << setw(wp) << "p-value" << std::endl;
+    std::cout.fill('-');
+    std::cout << setw(wi + wphi + wp) << '-' << std::endl;
+    std::cout.fill(' ');
     for (size_t i = 0; i < N; i++) {
         sf.update(X.col(i));
+        if ((i > 0) && (i % mod == 0)) {
+            Phi = sf.folding_test(&u, &p);
+            std::cout << std::fixed << std::setprecision(4);
+            std::cout << setw(wi) << i;
+            std::cout << setw(wphi) << Phi;
+            std::cout << std::scientific << setw(wp) << p << std::endl;
+        }
     }
-    
-    // Folding test
-    bool uni;
-    double pvalue;
-    std::cout << "Folding Statistics : " << sf.folding_test(&uni, &pvalue) << std::endl;
-    std::cout << std::scientific;
-    stringstream ss;
-    ss << "Unimodal ? " << (uni ? "Yes" : "No") << " (p-value: " << pvalue << ")";
-    std::cout << setw(40) << ss.str() << std::endl;
+    return 0;
 }
 ```
 
-With the same compilation steps as before, it may output that the distribution is multimodal
-```shell
-./example
-Testing on a bi-normal distribution
-Mode 1 : µ = 0.00, σ = 1.0, #pts = 2000 (20.00%)
-Mode 2 : µ = 5.00, σ = 1.0, #pts = 8000 (80.00%)
-Folding Statistics : 0.82
-    Unimodal ? No (p-value: 9.09495e-13)
+We compile it as before. The result may look like this:
+```commandline
+Iteration     Phi     p-value
+-----------------------------
+     5000  1.4418  0.0000e+00
+    10000  1.4753  0.0000e+00
+    15000  1.3866  0.0000e+00
+    20000  1.3149  9.0961e-13
+    25000  1.1633  1.5735e-06
+    30000  1.0396  3.3863e-01
+    35000  0.9137  9.2496e-03
+    40000  0.7511  9.7316e-11
+    45000  0.6506  9.0961e-13
+    50000  0.5474  0.0000e+00
+    55000  0.4672  0.0000e+00
+    60000  0.3944  0.0000e+00
+    65000  0.3341  0.0000e+00
+    70000  0.3111  0.0000e+00
+    75000  0.2662  0.0000e+00
+    80000  0.2470  0.0000e+00
+    85000  0.2263  0.0000e+00
+    90000  0.1865  0.0000e+00
+    95000  0.1765  0.0000e+00
+```
+
+Obviously, the folding statistics (`Phi`) decreases over time (unimodal -> multimodal). Close to 1 the output 
+of the test is naturally less significant (higher p-value).
+
+
+#### Multivariate normal random sample
+
+As claimed, you can also carry out the test on multivariate data. The following example
+analyze a sample drawn from a multivariate normal distribution.
+
+```c++
+#include "folding.h"
+
+int main(int argc, const char * argv[]) {
+    arma::arma_rng::set_seed_random();
+
+    size_t N = 100000;
+    size_t d = 3;
+    arma::vec mean(d, arma::fill::zeros);
+    arma::mat cov = 0.5 * arma::ones(d, d) + 0.5 * arma::eye(d, d);
+    arma::mat X = arma::mvnrnd(mean, vov, N); // size d x N
+    
+    BatchFolding bf(X);
+    bf.print();
+    return 0;
+}
+```
+
+The output may be the following (the folding statistics should be close to 3.0):
+
+```commandline
+$ ./example
+Folding Test of Unimodality
+Number of observations: 100000 (dim: 3)
+Computation time: 26290 µs (~ 3803727 it/s)
+Folding Statistics: 3.058
+	The distribution is then unimodal (with p-value: 0.000e+00)
+Folding pivot
+  -0.0045
+   0.0059
+  -0.0081
 
 ```
+
+
+
+

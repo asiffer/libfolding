@@ -38,14 +38,14 @@ double significance(double Phi, size_t n, size_t d) {
     auto f = [pval_e](double p) -> double { return p - pval_b * std::log(1. - p) - pval_e; };
 
     try {
-        return bisection(f, 1e-12, 1. - 1e-12);
+        return bisection(f, 0., 1. - 1e-16);
     }
     catch (std::domain_error &e) {
-        double low_significance = pval_e / (1. + pval_e);
+        double low_significance = pval_e / (1. + pval_b);
         if (low_significance < 1.) {
             return low_significance;
         } else {
-            return 1 - std::exp(-pval_e / pval_b);
+            return 1. - std::exp(-pval_e / pval_b);
         }
     }
 

@@ -24,23 +24,21 @@ int main(int argc, const char *argv[]) {
     const int N = 50000;
     const int d = 1;
 
-    arma::mat Cov = 0.5 * arma::ones(d, d) + 0.5 * arma::eye(d, d);
-    arma::vec Mean(d, arma::fill::ones);
-    arma::mat X = arma::mvnrnd(Mean, Cov, N); // size d x N
+
+    double lambda = 0.5;
+    arma::mat X = arma::randg(1, N, arma::distr_param(1.,1./lambda));
 
     //StreamFolding sf(10000);
 
     std::cout << std::fixed << std::setprecision(3) << std::left;
-    std::cout << std::endl << UNDERLINE << "Testing on a univariate normal distribution (batch)" << END << std::endl;
+    std::cout << std::endl << UNDERLINE << "Testing on a univariate exponential distribution (batch)" << END << std::endl;
     std::cout << "Dimension d = " << d << ", #pts = " << N << std::endl;
-    Mean.print("Mean");
-    Cov.print("Variance");
+    std::cout << "Parameter lambda = " << lambda << std::endl;
 
     BatchFolding bf(X);
 
-
     ss << "Pivot: " << bf.s2star.at(0);
-    double s2star_delta = arma::norm(bf.s2star - Mean);
+    double s2star_delta = arma::norm(bf.s2star - 2./lambda);
     //std::cout << s2star_delta << std::endl;
     std::cout << setw(40) << ss.str();
     if (s2star_delta < 8e-2) {
@@ -56,7 +54,7 @@ int main(int argc, const char *argv[]) {
 
     ss << "Folding Statistics : " << bf.Phi;
     std::cout << setw(40) << ss.str();
-    double err = std::abs(bf.Phi - 1.43);
+    double err = std::abs(bf.Phi - 1.54);
     if (err < 1e-1) {
         std::cout << OK;
     } else if (err < 2e-1) {

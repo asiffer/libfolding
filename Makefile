@@ -106,7 +106,7 @@ test_header:
 	@echo "[Testing]"
 
 
-test: norm_uni.run mvnorm_uni.run norm_multi.run perf.run
+test: exp_uni.run norm_uni.run mvnorm_uni.run norm_multi.run perf.run drift.run
 
 clean:
 	@rm -rfd $(OBJ_DIR)

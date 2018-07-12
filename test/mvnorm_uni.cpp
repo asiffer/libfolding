@@ -1,4 +1,4 @@
-#include "streamfolding.h"
+#include "folding.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -31,7 +31,7 @@ int main(int argc, const char *argv[]) {
     StreamFolding sf(5000);
 
     cout << std::fixed << std::setprecision(2);
-    cout << endl << UNDERLINE << "Testing on a multivariate normal distribution" << END << endl;
+    cout << endl << UNDERLINE << "Testing on a multivariate normal distribution (stream)" << END << endl;
     cout << "Dimension d = " << d << ", #pts = " << N << endl;
     Mean.print("Mean");
     Cov.print("Covariance matrix");

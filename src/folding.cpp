@@ -44,7 +44,7 @@ void BatchFolding::print() {
     std::cout << "Folding Test of Unimodality" << std::endl;
     std::cout << "Number of observations: " << this->n << " (dim: " << this->d << ")" << std::endl;
     auto itsec = (size_t) ((1e6 * this->n) / ((double) this->usec));
-    std::cout << "Computation time: " << this->usec << " µs" << "(~ " << itsec << " it/s)" << std::endl;
+    std::cout << "Computation time: " << this->usec << " µs (~ " << itsec << " it/s)" << std::endl;
     std::cout << "Folding Statistics: " << this->Phi << std::endl;
 
     cout << std::scientific;

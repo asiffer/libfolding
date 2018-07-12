@@ -2,7 +2,7 @@
 // Created by asr on 06/06/18.
 //
 
-#include "streamfolding.h"
+#include "folding.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -31,11 +31,11 @@ using sec = std::chrono::seconds;
 
 
 /* TIMING FUNCTION */
-int duration(T start, T end) {
+long int duration(T start, T end) {
     return std::chrono::duration_cast<usec>(end - start).count();
 }
 
-int operator-(const T &end, const T &start) {
+long int operator-(const T &end, const T &start) {
     return (duration(start, end));
 }
 
