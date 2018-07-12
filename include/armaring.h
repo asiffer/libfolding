@@ -6,7 +6,6 @@
 #define ARMARING_H
 
 #include <armadillo>
-#include "tbb/tbb.h"
 
 using namespace std;
 
@@ -67,6 +66,12 @@ public:
     size_t size();
 
     /**
+    * Return the maximum size of the container
+    * @return
+    */
+    size_t max_size();
+
+    /**
      * Compute the folded variance Var|X-s2_star| where X is the stored data (memory_) and
      * s2_star an external parameter (called "pivot")
      * @param s2_star The folding pivot
@@ -87,50 +92,5 @@ public:
     arma::vec get_last_erased();
 };
 
-
-class FoldedVariance {
-    /**
-     * This class aims to compute the folding variance in a
-     * parallel way, through intel threading building block
-     * (intel tbb)
-     */
-private:
-    /**
-     * Pointer to the observations
-     */
-    arma::mat *data_;
-
-    /**
-     * The folding ratio
-     */
-    arma::vec s_;
-
-    /**
-     * First output of the computation: the sum of the observations
-     */
-    double *sum_;
-
-    /**
-     * Second output of the computation: the sum of the squared observations
-     */
-    double *sum2_;
-
-public:
-    /**
-     * Constructor
-     * @param M Input observation (a d x n matrix)
-     * @param s_star the pivot (a vector: d x 1 matrix)
-     * @param sum a pointer to the sum of the observations
-     * @param sum2 a pointer to the sum of the squared observations
-     */
-    FoldedVariance(arma::mat *M, arma::vec &s_star, double *sum, double *sum2);
-
-    /**
-     * Operator for the parallel compuation
-     * @param r the range of the data taken into account
-     */
-    void operator()(const tbb::blocked_range <size_t> &r) const;
-
-};
 
 #endif // ARMARING_H

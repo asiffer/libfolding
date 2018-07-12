@@ -6,6 +6,11 @@
 
 using namespace std;
 
+arma::rowvec observation_squared_norm(arma::mat X) {
+    return arma::sum(arma::square(X), 0);
+}
+
+
 arma::mat sherman_morrison(const arma::mat &Ainv, const arma::vec &u, const arma::vec &v) {
     arma::rowvec vt = v.t();
     arma::mat R = (vt * Ainv * u);
@@ -34,9 +39,23 @@ Pivot::Pivot(arma::mat Xinit) { // Xinit is d x n where d is the dimension
     this->V_XR = arma::vec(dimension, arma::fill::zeros);
     this->V_X_inv = arma::inv_sympd(V_X);
 
+    double R_new;
+    arma::vec X_new;
+
     for (unsigned int i = 0; i < Xinit.n_cols; i++) {
-        this->add(Xinit.col(i));
+        //this->add(Xinit.col(i));
+        X_new = Xinit.col(i);
+        R_new = pow(arma::norm(X_new), 2);
+        this->n++;
+        this->S_X += X_new;
+        this->S_X2 += X_new * X_new.t();
+        this->S_R += R_new;
+        this->V_XR += R_new * X_new;
     }
+
+    /*this->S_X = arma::sum(Xinit, 1);
+    this->S_R = (double)arma::sum(observation_squared_norm(Xinit));*/
+
 
 }
 

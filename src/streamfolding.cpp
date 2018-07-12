@@ -2,22 +2,27 @@
 // Created by asr on 01/06/18.
 //
 
-#include "streamfolding.h"
+#include <streamfolding.h>
 
 
+/*
 double pval(double x, double e) {
     return pval_a * (1.0 - x) - pval_b * std::log(x) - e;
-}
+}*/
 
 
-double bisection(pvalfun f, double param, double a, double b, double eps = 1e-12) {
+double bisection(fun f, double a, double b, double eps = 1e-12) {
     double a_ = a;
     double b_ = b;
     double m_;
 
+    if (f(a_) * f(b_) > 0) {
+        throw domain_error("f(a) and f(b) must have different sign");
+    }
+
     while ((b_ - a_) > eps) {
         m_ = .5 * (a_ + b_);
-        if (f(a_, param) * f(m_, param) <= 0) {
+        if (f(a_) * f(m_) <= 0) {
             b_ = m_;
         } else {
             a_ = m_;
@@ -28,11 +33,30 @@ double bisection(pvalfun f, double param, double a, double b, double eps = 1e-12
 }
 
 
+double significance(double Phi, size_t n, size_t d) {
+    double pval_e = std::abs(Phi - 1.0) * std::sqrt((double) n) / (std::log((double) d) + pval_c);
+    auto f = [pval_e](double p) -> double { return p - pval_b * std::log(1. - p) - pval_e; };
+
+    try {
+        return bisection(f, 1e-12, 1. - 1e-12);
+    }
+    catch (std::domain_error &e) {
+        double low_significance = pval_e / (1. + pval_e);
+        if (low_significance < 1.) {
+            return low_significance;
+        } else {
+            return 1 - std::exp(-pval_e / pval_b);
+        }
+    }
+
+}
+
+
 StreamFolding::StreamFolding(size_t depth) : depth_(depth), ring_(ArmaRing(depth)) {
     this->initialized_ = false;
     this->pivot_ = nullptr;
     this->iteration_ = 0;
-    this->dimension_ = -1;
+    this->dimension_ = 0;
 }
 
 StreamFolding::~StreamFolding() {
@@ -45,16 +69,16 @@ void StreamFolding::update(arma::vec v) {
     int ring_status = this->ring_.update(v);
 
     if (not this->initialized_) {
-        if (this->iteration_ >= 10) {
-            try {
-                arma::mat X_init = this->ring_.dump();
-                this->pivot_ = new Pivot(X_init);
-                this->initialized_ = true;
-                this->dimension_ = X_init.n_rows;
-            }
+        if (this->iteration_ == this->ring_.max_size() - 1) {
+            //try {
+            arma::mat X_init = this->ring_.dump();
+            this->pivot_ = new Pivot(X_init);
+            this->initialized_ = true;
+            this->dimension_ = X_init.n_rows;
+            /*}
             catch (const std::runtime_error &e) {
                 cout << "[it " << this->iteration_ << "] Pivot initialization failed" << endl;
-            }
+            }*/
         }
     } else {
         this->pivot_->add(v);
@@ -86,11 +110,19 @@ arma::vec StreamFolding::s2star() {
 
 
 double StreamFolding::folding_test(bool *unimodal, double *p_value) {
-    double r = pow(1. + this->dimension_, 2);
+    double r = pow(1. + (double) this->dimension_, 2);
     double Phi = r * this->ring_.folded_var(this->s2star()) / arma::trace(this->cov());
     *unimodal = (Phi >= 1.0);
-    double e = std::abs(Phi - 1.0) * std::sqrt(1. * this->ring_.size()) / (std::log(1. * this->dimension_) + pval_c);
-    *p_value = bisection(pval, e, 0.0, 1.0);
+    *p_value = 1. - significance(Phi, this->ring_.size(), this->dimension_);
+    /*
+    double e = std::abs(Phi - 1.0) * std::sqrt((double) this->ring_.size()) /
+               (std::log((double) this->dimension_) + pval_c);
+
+    try {
+        double err = 1e-12;
+        *p_value = bisection(pval, e, err, 1.0 - err);
+    }*/
+
     return Phi;
 }
 

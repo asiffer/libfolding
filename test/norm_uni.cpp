@@ -22,19 +22,19 @@ int main(int argc, const char *argv[]) {
     arma::arma_rng::set_seed_random();
 
     const int N = 20000;
-    const int d = 2;
+    const int d = 1;
 
     arma::mat Cov = 0.5 * arma::ones(d, d) + 0.5 * arma::eye(d, d);
-    arma::vec Mean(d, arma::fill::zeros);
+    arma::vec Mean(d, arma::fill::ones);
     arma::mat Xinit = arma::mvnrnd(Mean, Cov, N); // size d x N
 
-    StreamFolding sf(5000);
+    StreamFolding sf(10000);
 
     cout << std::fixed << std::setprecision(2);
-    cout << endl << UNDERLINE << "Testing on a multivariate normal distribution" << END << endl;
+    cout << endl << UNDERLINE << "Testing on a univariate normal distribution" << END << endl;
     cout << "Dimension d = " << d << ", #pts = " << N << endl;
     Mean.print("Mean");
-    Cov.print("Covariance matrix");
+    Cov.print("Variance");
 
 
     for (size_t i = 0; i < N; i++) {
@@ -76,7 +76,7 @@ int main(int argc, const char *argv[]) {
 
     cout << setw(40) << "Checking the pivot computation ... ";
     arma::vec s2_star = sf.s2star();
-    double s2star_delta = arma::norm(s2_star);
+    double s2star_delta = arma::norm(s2_star - Mean);
     //cout << s2star_delta << endl;
     if (s2star_delta < 8e-2) {
         cout << OK << endl;

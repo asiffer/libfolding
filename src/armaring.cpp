@@ -40,13 +40,15 @@ size_t ArmaRing::size() {
 }
 
 
+size_t ArmaRing::max_size() {
+    return this->max_size_;
+}
+
+
+
 double ArmaRing::folded_var(arma::vec s2_star) {
-    size_t n = this->size();
-    double sum = 0.0;
-    double sum2 = 0.0;
-    FoldedVariance fv(&this->memory_, s2_star, &sum, &sum2);
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, n), fv);
-    return sum2 / n - pow(sum / n, 2.0);
+    arma::rowvec X_reduced = arma::sqrt(arma::sum(arma::square(this->memory_.each_col() - s2_star), 0));  // |X-s*|
+    return arma::var(X_reduced);
 }
 
 
@@ -60,17 +62,5 @@ arma::vec ArmaRing::get_last_erased() {
 }
 
 
-FoldedVariance::FoldedVariance(arma::mat *M, arma::vec &s_star, double *sum, double *sum2) :
-        data_(M), s_(s_star), sum_(sum), sum2_(sum2) {
-}
 
-
-void FoldedVariance::operator()(const tbb::blocked_range <size_t> &r) const {
-    double norm;
-    for (size_t i = r.begin(); i != r.end(); ++i) {
-        norm = arma::norm(this->data_->col(i) - this->s_);
-        *this->sum_ += norm;
-        *this->sum2_ += norm * norm;
-    }
-}
 

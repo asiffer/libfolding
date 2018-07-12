@@ -38,10 +38,10 @@ EXPORT = @export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIB_DIR)
 # compiler & flags
 CXX = @c++
 CXXFLAGS = -std=c++11 -Wall -pedantic
-LFLAGS = -L/usr/lib -L/usr/lib/x86_64-linux-gnu -ltbb -larmadillo
+LFLAGS = -L/usr/lib -L/usr/lib/x86_64-linux-gnu -larmadillo
 
 # all the files (header, sources, build)
-FILES = pivot.h armaring.h streamfolding.h
+FILES = pivot.h armaring.h streamfolding.h folding.h
 DEPS = $(foreach n,$(FILES),$(INC_DIR)/$(n))
 SRCS = $(foreach n,$(FILES:.h=.cpp),$(SRC_DIR)/$(n)) $(SRC_DIR)/interface.cpp
 OBJS = $(FILES:.h=.o) interface.o
@@ -106,7 +106,7 @@ test_header:
 	@echo "[Testing]"
 
 
-test: mvnorm_uni.run norm_multi.run perf.run
+test: norm_uni.run mvnorm_uni.run norm_multi.run perf.run
 
 clean:
 	@rm -rfd $(OBJ_DIR)

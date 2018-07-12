@@ -1,6 +1,8 @@
 # libfolding
 
-`libfolding` is a `C++` library which implements the **folding test of unimodality** (FTU) over streaming data.
+### Introduction
+`libfolding` is a `C++` library which implements the **folding test of unimodality** (FTU). 
+It is designed to work on streaming data but you can also perform the test on a batch dataset.
 This library is based on [Armadillo](http://arma.sourceforge.net/).
 
 ### Unimodality Testing
@@ -18,7 +20,8 @@ nor the number of clusters) but it is generally more efficient (lower complexity
 
 Here is presented the univariate case, but the FTU works also on multivariate distributions!
 
-### Manual installation
+### Installation
+#### Manual installation
 
 As usual, you just need to clone the repo
 ```commandline
@@ -34,7 +37,7 @@ During the installation, you can set the location of the library and its headers
 By default, there are put in `/usr/lib` and `/usr/include/libfolding`. You can change it with the variable `INSTALL_LIB_DIR` and
 `INSTALL_HEAD_DIR`.
 
-### Installation through debian package
+#### Installation through debian package
 
 The easiest way is to use the debian package. You just need to add the following pppa:
 ```commandline
@@ -52,7 +55,11 @@ sudo apt install libfolding-dev
 
 ### Examples
 
+#### Univariate normal random sample
+```c++
+#include "folding.h"
 
+```
 
 #### Multivariate normal random sample
 ```c++

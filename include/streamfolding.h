@@ -6,10 +6,12 @@
 #define STREAMFOLDING_H
 
 #include <iostream>
+#include <functional>
 #include "pivot.h"
 #include "armaring.h"
 
-typedef double (*pvalfun)(double, double);
+//typedef double (*fun)(double);
+typedef std::function<double(double)> fun;
 
 using namespace std;
 

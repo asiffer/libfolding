@@ -88,7 +88,7 @@ public:
 
     /**
      * Get the dimension of the observations
-     * @return n
+     * @return
      */
     size_t dim();
 

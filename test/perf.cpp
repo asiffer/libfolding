@@ -45,17 +45,18 @@ int main(int argc, const char *argv[]) {
     arma::arma_rng::set_seed_random();
 
     const size_t N = 1000000;
+    const size_t win_size = 1000;
     const size_t max_dim = 3;
 
     const int w = 15;
-    cout << left;
+    cout << left << "Window size: " << win_size << endl;
     cout << setw(w) << "Dimension";
     cout << setw(w) << "#data";
     cout << setw(w) << "Time (µs)";
     cout << setw(w) << "Speed (it/s)" << endl;
     for (size_t d = 1; d <= max_dim; d++) {
         arma::mat Xinit = arma::randu(d, N); // size d x N
-        StreamFolding sf(1000);
+        StreamFolding sf(win_size);
         T start_ = std::chrono::steady_clock::now();
         for (size_t i = 0; i < N; i++) {
             sf.update(Xinit.col(i));
