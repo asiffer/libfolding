@@ -3,7 +3,7 @@ Source: libfolding
 Version: 1.1
 Architecture: amd64
 Maintainer: asr <alban.siffer@irisa.fr>
-Installed-Size: 22
+Installed-Size: 21
 Depends: libfolding (= 1.1), libtbb-dev, libarmadillo-dev
 Section: libdevel
 Priority: optional

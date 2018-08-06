@@ -96,9 +96,9 @@ install:
 	@echo "Checking the library installation directory ("$(INSTALL_LIB_DIR)")"
 	@mkdir -p $(INSTALL_LIB_DIR)
 	@echo "Installing the shared library ("$(TARGET)")"
-	@install -t $(INSTALL_LIB_DIR) $(LIB_DIR)/*.so
+	@install $(LIB_DIR)/*.so $(INSTALL_LIB_DIR)
 	@echo "Installing the headers"
-	@install -t $(INSTALL_HEAD_DIR) $(INC_DIR)/*.h
+	@install $(INC_DIR)/*.h $(INSTALL_HEAD_DIR) 
 	@echo "[done]"
 
 test_header:
