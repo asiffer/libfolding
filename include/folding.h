@@ -10,9 +10,7 @@
 #include <chrono>
 
 
-//double pval(double x, double e);
 
-//double bisection(fun f, double a, double b, double eps = 1e-12);
 double significance(double Phi, size_t n, size_t d);
 
 
