@@ -57,7 +57,7 @@ all: checkdir $(TARGET)
 # create lib/ and build/ directories
 checkdir:
 	@echo
-	@echo "==== libfolding-dev" $(VERSION) "===="
+	@echo "==== libfolding" $(VERSION) "===="
 	@echo
 	@echo "Checking the library directory ("$(LIB_DIR)")"
 	@mkdir -p $(LIB_DIR)
