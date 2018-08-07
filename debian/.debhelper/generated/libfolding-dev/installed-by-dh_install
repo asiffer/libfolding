@@ -1,0 +1,4 @@
+./debian/tmp/usr/include/libfolding/armaring.h
+./debian/tmp/usr/include/libfolding/folding.h
+./debian/tmp/usr/include/libfolding/pivot.h
+./debian/tmp/usr/include/libfolding/streamfolding.h

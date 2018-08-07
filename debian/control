@@ -1,22 +1,22 @@
 Source: libfolding
 Priority: optional
 Maintainer: asr <alban.siffer@irisa.fr>
-Build-Depends: debhelper (>= 10), libtbb-dev, libarmadillo-dev
+Build-Depends: debhelper (>= 10), libarmadillo-dev
 Standards-Version: 4.1.2
 Section: libs
 Homepage: https://github.com/asiffer/libfolding
-#Vcs-Git: https://anonscm.debian.org/git/collab-maint/libfolding.git
-#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/libfolding.git
+
 
 Package: libfolding-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends: libfolding (= ${binary:Version}), libtbb-dev, libarmadillo-dev, ${misc:Depends}
+Depends: libfolding (= ${binary:Version}), libarmadillo-dev, ${misc:Depends}
 Description: C++ library to compute the folding test of unimodality over streaming data - dev files
+
 
 Package: libfolding
 Architecture: any
 Multi-Arch: same
-Depends: libtbb2, libarmadillo8, ${shlibs:Depends}, ${misc:Depends}
+Depends: libarmadillo8, ${shlibs:Depends}, ${misc:Depends}
 Description: C++ library to compute the folding test of unimodality over streaming data - exec files
