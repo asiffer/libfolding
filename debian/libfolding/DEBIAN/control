@@ -3,7 +3,7 @@ Version: 1.1
 Architecture: amd64
 Maintainer: asr <alban.siffer@irisa.fr>
 Installed-Size: 402
-Depends: libtbb2, libarmadillo8 (>= 1:8.400.0+dfsg), libc6 (>= 2.14), libgcc1 (>= 1:3.0), libstdc++6 (>= 5.2)
+Depends: libarmadillo8 (>= 1:8.400.0+dfsg), libc6 (>= 2.14), libgcc1 (>= 1:3.0), libstdc++6 (>= 5.2)
 Section: libs
 Priority: optional
 Multi-Arch: same
