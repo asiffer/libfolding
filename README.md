@@ -4,6 +4,9 @@
 `libfolding` is a `C++` library which implements the **folding test of unimodality** (FTU). 
 It is designed to work on streaming data but you can also perform the test on a batch dataset.
 This library is based on [Armadillo](http://arma.sourceforge.net/).
+This work is a part of the following publication:
+
+Siffer, A., Fouque, P. A., Termier, A., & Largouët, C. (2018, July). Are your data gathered?. *In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining (pp. 2210-2218)*. ACM.
 
 ### Unimodality Testing
 
