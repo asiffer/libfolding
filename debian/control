@@ -18,5 +18,5 @@ Description: C++ library to compute the folding test of unimodality over streami
 Package: libfolding
 Architecture: any
 Multi-Arch: same
-Depends: libarmadillo8, ${shlibs:Depends}, ${misc:Depends}
+Depends: libarmadillo9, ${shlibs:Depends}, ${misc:Depends}
 Description: C++ library to compute the folding test of unimodality over streaming data - exec files
