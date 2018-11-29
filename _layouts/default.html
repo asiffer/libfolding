@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<div id="page">
+		{% include head.html %}
+		<div class="homeleft" style="width: 100%;">
+			<div class="top">
+				<div class="logo">
+						<div class="normal">F<left>T</left><line></line><right>T</right>U</div>
+						<div class="sub">THE FOLDING TEST OF UNIMODALITY</div>
+				</div>
+			
+				<div class="pagetitle">
+					{{ page.title }}
+				</div>
+			</div>
+			<div class="content">
+				{{ content }}
+			</div>
+		</div>
+		<div class="homeright">
+			{% include menu.html %}
+		</div>
+	</div>
+</html>

@@ -1,0 +1,38 @@
+.language-bash.highlighter-rouge {
+    
+    pre code {
+        background-color: $color-fg;
+        color: $color-bg;
+        /*.o {
+            color: $color-myw-3;
+        }*/
+        .nt {
+            color: $color-feather;
+        }
+        .nb {
+            color: $color-focus-light;
+        }
+    }
+}
+
+.highlight pre code {
+    color: $color-fg;
+    word-wrap: normal;
+    white-space: pre-wrap; 
+
+    .cp, .nf { // #include and main
+        color: $color-teal;
+    }
+    .k, .kt { // keyword
+        color: $color-focus;
+    }
+    .s { // string
+        color: $palette2680-purple;
+    }
+    .o { // * and ::
+        color: $color-kde-AbyssBlue;
+    }
+    .c1 {
+        color: $color-myw-3;
+    }
+}
