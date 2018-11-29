@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+	<div id="page">
+		<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>C++</title>
+
+
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+		  tex2jax: {
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			inlineMath: [['$','$']]
+		  }
+		});
+	</script>
+	<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+	<link rel="stylesheet" href="/ftu/css/main.css">
+	<link rel="canonical" href="http://localhost:4000/ftu/cpp">
+
+	<link href="https://fonts.googleapis.com/css?family=Francois+One|Didact+Gothic|Roboto|Roboto+Mono|Caveat|Kalam|Oswald|Muli|Open+Sans|Shadows+Into+Light|Lato" rel="stylesheet" type='text/css'>
+	
+	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+	<link rel="shortcut icon" type="image/png" href="/ftu" >
+</head> 
+
+		<div class="homeleft" style="width: 100%;">
+			<div class="top">
+				<div class="logo">
+						<div class="normal">F<left>T</left><line></line><right>T</right>U</div>
+						<div class="sub">THE FOLDING TEST OF UNIMODALITY</div>
+				</div>
+			
+				<div class="pagetitle">
+					C++
+				</div>
+			</div>
+			<div class="content">
+				<h3 id="contents">Contents</h3>
+
+<ul>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#installation">Installation</a>
+    <ul>
+      <li><a href="#manual_installation">Manual installation</a></li>
+      <li><a href="#debian">Installation through debian package</a></li>
+    </ul>
+  </li>
+  <li><a href="#getting_started">Getting started</a>
+    <ul>
+      <li><a href="#batch_example">Batch example</a></li>
+      <li><a href="#streaming_example">Streaming example</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="introduction">Introduction</h2>
+<p><a name="introduction"></a></p>
+
+<p><code class="language-c++ highlighter-rouge"><span class="n">libfolding</span></code> is initially a <code class="language-c++ highlighter-rouge"><span class="n">C</span><span class="o">++</span></code> library which implements the folding test of unimodality (FTU). It is designed to work on streaming data but you can also perform the test on a batch dataset. This library is based on <a href="http://arma.sourceforge.net/">Armadillo</a> for linear algebra.</p>
+
+<h2 id="installation">Installation</h2>
+<p><a name="installation"></a></p>
+
+<h3 id="manual-installation">Manual installation</h3>
+<p><a name="manual_installation"></a></p>
+
+<p>As usual, you just have to clone the repo</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/asiffer/libfolding.git
+</code></pre></div></div>
+<p>And then build and install it</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>libfolding/
+make
+make <span class="nb">install</span>
+</code></pre></div></div>
+<p>During the installation, you can set the location of the library and its headers.
+By default, there are put in <code class="language-c++ highlighter-rouge"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span></code> and <code class="language-c++ highlighter-rouge"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">libfolding</span></code>. You can change it with the variable <code class="language-c++ highlighter-rouge"><span class="n">INSTALL_LIB_DIR</span></code> and
+<code class="language-c++ highlighter-rouge"><span class="n">INSTALL_HEAD_DIR</span></code>.</p>
+
+<h3 id="installation-through-debian-package">Installation through debian package</h3>
+<p><a name="debian"></a></p>
+
+<p>The easiest way is to use the debian package. You just need to add the following ppa:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>add-apt-repository ppa:asiffer/libfolding
+<span class="nb">sudo </span>apt-get update
+</code></pre></div></div>
+<p>Then you can install the library</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>libfolding
+</code></pre></div></div>
+<p>and the headers (if desired)</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>libfolding-dev
+</code></pre></div></div>
+
+<h2 id="getting-started">Getting started</h2>
+<p><a name="getting_started"></a></p>
+
+<h3 id="batch-example">Batch example</h3>
+<p><a name="batch_example"></a></p>
+
+<p>The first thing you want to do is probably to perform the <strong>FTU</strong> on a dataset. As <code class="language-c++ highlighter-rouge"><span class="n">libfolding</span></code> is built upon <code class="language-c++ highlighter-rouge"><span class="n">libarmadillo</span></code> (for linear algebra), you need to use its objects to load your data. An example is given below.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// file batch_iris.cpp</span>
+<span class="cp">#include "folding.h"
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="n">arma</span><span class="o">::</span><span class="n">mat</span> <span class="n">X</span><span class="p">;</span> <span class="c1">// declare the matrix object</span>
+    <span class="c1">// load the 'iris' dataset</span>
+    <span class="n">X</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">"../data/iris.csv"</span><span class="p">,</span><span class="n">arma</span><span class="o">::</span><span class="n">csv_ascii</span><span class="p">);</span> 
+    <span class="n">X</span><span class="p">.</span><span class="n">shed_col</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// remove the species columns</span>
+    <span class="n">BatchFolding</span> <span class="n">bf</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">t</span><span class="p">());</span> <span class="c1">// perform the FTU</span>
+    <span class="n">bf</span><span class="p">.</span><span class="n">print</span><span class="p">();</span> <span class="c1">// print results</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So, you need to use the <code class="language-c++ highlighter-rouge"><span class="n">arma</span><span class="o">::</span><span class="n">mat</span></code> object provided by <code class="language-c++ highlighter-rouge"><span class="n">libarmadillo</span></code> to import and manipulate data. Then, you may notice that the FTU is performed on the transposed matrix. Actually, as Armadillo uses column-major ordering convention, we do consider a column as an observation. On linux system you might compile as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>g++ <span class="nt">-std</span><span class="o">=</span>c++11 <span class="nt">-Wall</span> <span class="nt">-pedantic</span> <span class="nt">-I</span>/usr/include/libfolding <span class="nt">-o</span> ./batch_iris  ./batch_iris.cpp <span class="nt">-lfolding</span> <span class="nt">-larmadillo</span>
+</code></pre></div></div>
+
+<p>Finally, by running <code class="language-c++ highlighter-rouge"><span class="p">.</span><span class="o">/</span><span class="n">batch_iris</span></code>, the output may look like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Folding Test of Unimodality
+Number of observations: 151 <span class="o">(</span>dim: 4<span class="o">)</span>
+Computation <span class="nb">time</span>: 261 µs <span class="o">(</span>~ 578544 it/s<span class="o">)</span>
+Folding Statistics: 3.414
+        The distribution is <span class="k">then </span>unimodal <span class="o">(</span>with p-value: 0.000e+00<span class="o">)</span>
+Folding pivot
+   4.4659
+   2.9085
+   3.6206
+   1.8279
+</code></pre></div></div>
+
+<p>In a nutshell, the test claims that the distribution is rather unimodal. Details about the output of the FTU are given <a href="/ftu/unimodality-testing#output">here</a>.</p>
+
+<p>The <code class="language-c++ highlighter-rouge"><span class="n">BatchFolding</span></code> object does not offer more methods but you can access to the data printed above.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">unimodal</span><span class="p">;</span> <span class="c1">// the FTU result</span>
+<span class="kt">double</span> <span class="n">Phi</span><span class="p">;</span> <span class="c1">// the folding statistics</span>
+<span class="kt">double</span> <span class="n">p_value</span><span class="p">;</span> <span class="c1">// the p-value of the test (lower is better)</span>
+<span class="n">arma</span><span class="o">::</span><span class="n">vec</span> <span class="n">s2star</span><span class="p">;</span> <span class="c1">// the folding pivot</span>
+<span class="kt">long</span> <span class="kt">int</span> <span class="n">usec</span><span class="p">;</span> <span class="c1">// the time to perform the test (~ debug information)</span>
+</code></pre></div></div>
+
+<h3 id="streaming-example">Streaming example</h3>
+<p><a name="streaming_example"></a></p>
+
+<p>One great feature of the FTU is that it can be computed/updated incrementally over a sliding window. Then it is possible to monitor the <em>unimodality character</em> of streaming data over time.</p>
+
+			</div>
+		</div>
+		<div class="homeright">
+			<li><a title="Home" href="/ftu/">
+	<i class="fas fa-home"></i></a>
+</li>
+<li><a href="/ftu/unimodality-testing" 
+	title="About FTU"
+	style="position:relative;top:0;left:0; width:100%; height:100%; display:block;"><svg viewBox="-10 -20 120 120" preserveAspectRatio="xMidYMid meet" >
+		<path fill="none" d=" 
+            M 0.00,70.00
+L 1.69,69.98
+L 3.39,69.96
+L 5.08,69.91
+L 6.78,69.85
+L 8.47,69.74
+L 10.17,69.59
+L 11.86,69.36
+L 13.56,69.02
+L 15.25,68.55
+L 16.95,67.89
+L 18.64,67.00
+L 20.34,65.82
+L 22.03,64.28
+L 23.73,62.31
+L 25.42,59.86
+L 27.12,56.88
+L 28.81,53.33
+L 30.51,49.21
+L 32.20,44.55
+L 33.90,39.41
+L 35.59,33.90
+L 37.29,28.18
+L 38.98,22.43
+L 40.68,16.88
+L 42.37,11.76
+L 44.07,7.31
+L 45.76,3.76
+L 47.46,1.28
+L 49.15,0.00
+L 50.85,0.00
+L 52.54,1.28
+L 54.24,3.76
+L 55.93,7.31
+L 57.63,11.76
+L 59.32,16.88
+L 61.02,22.43
+L 62.71,28.18
+L 64.41,33.90
+L 66.10,39.41
+L 67.80,44.55
+L 69.49,49.21
+L 71.19,53.33
+L 72.88,56.88
+L 74.58,59.86
+L 76.27,62.31
+L 77.97,64.28
+L 79.66,65.82
+L 81.36,67.00
+L 83.05,67.89
+L 84.75,68.55
+L 86.44,69.02
+L 88.14,69.36
+L 89.83,69.59
+L 91.53,69.74
+L 93.22,69.85
+L 94.92,69.91
+L 96.61,69.96
+L 98.31,69.98
+L 100.00,70.00
+			"/>
+</svg>
+</a></li>
+
+<li><a href="/ftu/cpp" title="C++ library">
+	C++</a></li>
+
+<li><a href="/ftu/python" title="Python3 wrapper">
+	<i class="fab fa-python"></i></a></li>
+
+<li><a href="/ftu/R" title="R package" >
+	R</a></li>
+
+<li><a href="/ftu/about" title="About" >
+	&middot;&middot;&middot;</a></li>
+
+
+		
+
+		</div>
+	</div>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+	<div id="page">
+		<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Unimodality Testing</title>
+
+
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+		  tex2jax: {
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			inlineMath: [['$','$']]
+		  }
+		});
+	</script>
+	<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+	<link rel="stylesheet" href="/ftu/css/main.css">
+	<link rel="canonical" href="http://localhost:4000/ftu/unimodality-testing">
+
+	<link href="https://fonts.googleapis.com/css?family=Francois+One|Didact+Gothic|Roboto|Roboto+Mono|Caveat|Kalam|Oswald|Muli|Open+Sans|Shadows+Into+Light|Lato" rel="stylesheet" type='text/css'>
+	
+	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+	<link rel="shortcut icon" type="image/png" href="/ftu" >
+</head> 
+
+		<div class="homeleft" style="width: 100%;">
+			<div class="top">
+				<div class="logo">
+						<div class="normal">F<left>T</left><line></line><right>T</right>U</div>
+						<div class="sub">THE FOLDING TEST OF UNIMODALITY</div>
+				</div>
+			
+				<div class="pagetitle">
+					Unimodality Testing
+				</div>
+			</div>
+			<div class="content">
+				<h3 id="contents">Contents</h3>
+
+<ul>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#mechanism">Understanding the folding mechanism</a></li>
+  <li><a href="#output">Output of the test</a>
+    <ul>
+      <li><a href="#phi">The folding statistics</a></li>
+      <li><a href="#p-value">The p-value</a></li>
+      <li><a href="#pivot">The folding pivot</a></li>
+    </ul>
+  </li>
+  <li><a href="#other">Other unimodality tests</a></li>
+</ul>
+
+<h2 id="introduction">Introduction</h2>
+<p><a name="introduction"></a></p>
+
+<p>The aim of unimodality testing is to check whether the distribution of the data is <strong>unimodal</strong> or <strong>multimodal</strong>.</p>
+
+<p>For many people it may refer to clustering but it is weaker: it does not clearly find neither the clusters nor the number of clusters. It only claims whether there is a single cluster or several. Moreover unimodality testing is generally more efficient than clustering (lower complexity).</p>
+
+<p>Here is presented the univariate case, but the <strong>FTU</strong> works also on multivariate distributions!</p>
+
+<div class="figure" style="width: 50%; float: left">
+    <object type="image/svg+xml" data="assets/unimod.svg" style="width: 95%; float: left;">
+    </object>
+    <figcaption>Unimodal distribution</figcaption>
+</div>
+
+<div class="figure" style="width: 50%; float: right">
+    <object type="image/svg+xml" data="assets/multimod.svg" style="width: 95%; float: right;">
+    </object>
+    <figcaption>Multimodal distribution</figcaption>
+</div>
+
+<h2 id="understanding-the-folding-mechanism">Understanding the folding mechanism</h2>
+<p><a name="mechanism"></a></p>
+
+<p>Let us give some explanations about how the FTU works.</p>
+
+<div style="float: left; width: 100%; margin-bottom: 0.5em;">
+    <div class="figure" style="float: left; width: 45%; margin: 0 2%;">
+        <object type="image/svg+xml" data="assets/0_big_variance.svg">
+        </object>
+        Let us consider a bimodal distribution. Because of the two modes its variance is quite large.
+    </div>
+    <div class="figure" style="float: left; width: 45%; margin: 0 2%;">
+        <object type="image/svg+xml" data="assets/1_pivot.svg">
+        </object>
+        Now, the idea is to find a "suitable" <i>pivot</i> noted s*...
+    </div>
+</div>
+
+<div style="float: left; width: 100%; margin-bottom: 3em;">
+    <div class="figure" style="float: left; width: 45%; margin: 0 2%;">
+        <object type="image/svg+xml" data="assets/2_fold.svg"></object>
+        ... so as to fold a mode (for example the left one) onto the other one.
+    </div>
+    <div class="figure" style="float: left; width: 45%; margin: 0 2%;">
+        <object type="image/svg+xml" data="assets/3_folded_dist.svg" style="width: 100%;">
+        </object>
+        The resulting distribution (i.e. the sum of the right mode and the folded left mode) has then a lower variance.
+    </div>
+</div>
+
+<p>Obviously, no matter the shape of the distribution, the variance is reduced by folding. But, the reduction is far greater in the multimodal case than in the unimodal case. The FTU uses this phenomenon to discriminate unimodal distribution from multimodal ones.</p>
+
+<h2 id="output-of-the-test">Output of the test</h2>
+<p><a name="output"></a></p>
+
+<h3 id="the-folding-statistics">The folding statistics</h3>
+<p><a name="phi"></a></p>
+
+<p>No matter the library you use, the output results are quite the same. The main returned result is the <strong>folding statistics</strong> noted $\Phi$. It scores the <em>unimodality character</em> of the input data distribution.</p>
+
+<div class="frame">
+If $\Phi\ge1$ the distribution is rather unimodal while $\Phi&lt; 1$ indicates it is rather multimodal.
+</div>
+
+<p>So the final decision of the test is based on the value of $\Phi$.</p>
+
+<h3 id="the-p-value">The p-value</h3>
+<p><a name="p-value"></a></p>
+
+<p>Moreover, the test also outputs a <strong>p-value</strong> which indicates the significance of the test. The lower, the better. The folding statistics has naturally a direct impact on the p-value but the latter also depends on the size of the dataset.</p>
+
+<p>Indeed, according to the amount of data you have, you have not the same knowledge about the underlying distribution, so the test has not the same relevance. Thus, the the more data you have, the more significant the test will be.</p>
+
+<p>Usually, the test is considered as significant when the p-value is lower than 0.05.</p>
+
+<h3 id="the-folding-pivot">The folding pivot</h3>
+<p><a name="pivot"></a></p>
+
+<p>Finally, as the test needs to compute the <strong>folding pivot</strong> (noted $s^*$), you can retrieve this information.</p>
+
+<h2 id="other-unimodality-tests">Other unimodality tests</h2>
+<p><a name="other"></a></p>
+
+<p>Müller, D. W., &amp; Sawitzki, G. (1991). <a href="https://www.jstor.org/stable/pdf/2290406.pdf">Excess mass estimates and tests for multimodality</a>. <em>Journal of the American Statistical Association</em>, 86(415), 738-746.</p>
+
+<p>Hartigan, J. A., &amp; Hartigan, P. M. (1985). <a href="https://projecteuclid.org/download/pdf_1/euclid.aos/1176346577">The dip test of unimodality</a>. <em>The annals of Statistics</em>, 13(1), 70-84.</p>
+
+<p>Silverman, B. W. (1981). <a href="https://www.jstor.org/stable/pdf/2985156.pdf?casa_token=N0Ig7PjdpCQAAAAA:K-ekvciPzFJaTpB3P-uUUfroZtAmSnSrUdbX8TopjFWFk9Zt6-T5xcnTKJ9kNygr5hKmcJDuuGWZrBWzcRV_UCIVFR2RcGVy37bvnL6hzYDjZgE5aK0">Using kernel density estimates to investigate multimodality</a>. <em>Journal of the Royal Statistical Society. Series B (Methodological)</em>, 97-99.</p>
+
+			</div>
+		</div>
+		<div class="homeright">
+			<li><a title="Home" href="/ftu/">
+	<i class="fas fa-home"></i></a>
+</li>
+<li><a href="/ftu/unimodality-testing" 
+	title="About FTU"
+	style="position:relative;top:0;left:0; width:100%; height:100%; display:block;"><svg viewBox="-10 -20 120 120" preserveAspectRatio="xMidYMid meet" >
+		<path fill="none" d=" 
+            M 0.00,70.00
+L 1.69,69.98
+L 3.39,69.96
+L 5.08,69.91
+L 6.78,69.85
+L 8.47,69.74
+L 10.17,69.59
+L 11.86,69.36
+L 13.56,69.02
+L 15.25,68.55
+L 16.95,67.89
+L 18.64,67.00
+L 20.34,65.82
+L 22.03,64.28
+L 23.73,62.31
+L 25.42,59.86
+L 27.12,56.88
+L 28.81,53.33
+L 30.51,49.21
+L 32.20,44.55
+L 33.90,39.41
+L 35.59,33.90
+L 37.29,28.18
+L 38.98,22.43
+L 40.68,16.88
+L 42.37,11.76
+L 44.07,7.31
+L 45.76,3.76
+L 47.46,1.28
+L 49.15,0.00
+L 50.85,0.00
+L 52.54,1.28
+L 54.24,3.76
+L 55.93,7.31
+L 57.63,11.76
+L 59.32,16.88
+L 61.02,22.43
+L 62.71,28.18
+L 64.41,33.90
+L 66.10,39.41
+L 67.80,44.55
+L 69.49,49.21
+L 71.19,53.33
+L 72.88,56.88
+L 74.58,59.86
+L 76.27,62.31
+L 77.97,64.28
+L 79.66,65.82
+L 81.36,67.00
+L 83.05,67.89
+L 84.75,68.55
+L 86.44,69.02
+L 88.14,69.36
+L 89.83,69.59
+L 91.53,69.74
+L 93.22,69.85
+L 94.92,69.91
+L 96.61,69.96
+L 98.31,69.98
+L 100.00,70.00
+			"/>
+</svg>
+</a></li>
+
+<li><a href="/ftu/cpp" title="C++ library">
+	C++</a></li>
+
+<li><a href="/ftu/python" title="Python3 wrapper">
+	<i class="fab fa-python"></i></a></li>
+
+<li><a href="/ftu/R" title="R package" >
+	R</a></li>
+
+<li><a href="/ftu/about" title="About" >
+	&middot;&middot;&middot;</a></li>
+
+
+		
+
+		</div>
+	</div>
+</html>
