@@ -19,13 +19,13 @@
 	</script>
 	<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
-	<link rel="stylesheet" href="/ftu/css/main.css">
-	<link rel="canonical" href="http://localhost:4000/ftu/cpp">
+	<link rel="stylesheet" href="/libfolding/css/main.css">
+	<link rel="canonical" href="http://localhost:4000/libfolding/cpp">
 
 	<link href="https://fonts.googleapis.com/css?family=Francois+One|Didact+Gothic|Roboto|Roboto+Mono|Caveat|Kalam|Oswald|Muli|Open+Sans|Shadows+Into+Light|Lato" rel="stylesheet" type='text/css'>
 	
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-	<link rel="shortcut icon" type="image/png" href="/ftu" >
+	<link rel="shortcut icon" type="image/png" href="/libfolding" >
 </head> 
 
 		<div class="homeleft" style="width: 100%;">
@@ -135,7 +135,7 @@ Folding pivot
    1.8279
 </code></pre></div></div>
 
-<p>In a nutshell, the test claims that the distribution is rather unimodal. Details about the output of the FTU are given <a href="/ftu/unimodality-testing#output">here</a>.</p>
+<p>In a nutshell, the test claims that the distribution is rather unimodal. Details about the output of the FTU are given <a href="/libfolding/unimodality-testing#output">here</a>.</p>
 
 <p>The <code class="language-c++ highlighter-rouge"><span class="n">BatchFolding</span></code> object does not offer more methods but you can access to the data printed above.</p>
 
@@ -149,15 +149,154 @@ Folding pivot
 <h3 id="streaming-example">Streaming example</h3>
 <p><a name="streaming_example"></a></p>
 
-<p>One great feature of the FTU is that it can be computed/updated incrementally over a sliding window. Then it is possible to monitor the <em>unimodality character</em> of streaming data over time.</p>
+<p>One great feature of the FTU is that it can be computed/updated incrementally over a sliding window. Then it is possible to monitor over time the <em>unimodality character</em> of streaming data.</p>
+
+<p>The following example in more theoretical and deals about a drifting mode.
+Data are initially under two modes which are initially at the same position (0).
+Then a mode drifts to the right while the other one remains the same. In this example, data are initially 
+unimodal and become multimodal.</p>
+
+<div class="figure" style="float: left; width: 100%; margin: 1em auto;">
+   <object type="image/svg+xml" data="assets/drift.svg"></object>
+</div>
+
+<p>In this example, we want to perform the FTU several times on this stream to check if we monitor the modality change (unimodality -&gt; multimodality).</p>
+
+<p>For the next part we will use the following headers.</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "folding.h"
+#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+#include &lt;iomanip&gt;
+#include &lt;random&gt;
+</span></code></pre></div></div>
+
+<p>The generation of the data is given by the code below.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * @brief   Generates N streaming points X_1, ... X_n such that 
+ *          X_i is drawn from (1-ratio)*N(0,1) + ratio*N(i*speed, 1)
+ * @param   N     The number of data to generate
+ * @param   ratio The proportion of data inside the drifiting mode 
+ *                (0.5 means that the modes are balanced)
+ * @param   speed The drifting speed
+ * @returns A 1xN armadillo matrix
+*/</span>
+<span class="n">arma</span><span class="o">::</span><span class="n">mat</span> <span class="n">binormal_with_drift</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">N</span><span class="p">,</span> <span class="kt">double</span> <span class="n">ratio</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="kt">double</span> <span class="n">speed</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// random device</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">random_device</span> <span class="n">rd</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">default_random_engine</span> <span class="n">gen</span><span class="p">(</span><span class="n">rd</span><span class="p">());</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">uniform_real_distribution</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">u</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// fill the data</span>
+    <span class="n">arma</span><span class="o">::</span><span class="n">mat</span> <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">arma</span><span class="o">::</span><span class="n">fill</span><span class="o">::</span><span class="n">zeros</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">X</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">arma</span><span class="o">::</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// N(0,1) -&gt; first mode (fixed)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">u</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ratio</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">X</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+=</span> <span class="n">speed</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// N(speed*i , 1) -&gt; second mode (drifting)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The object <code class="language-c++ highlighter-rouge"><span class="n">StreamFolding</span></code> is designed to carry out the folding test of unimodality within a sliding window.
+At any time we can do the test and check how the data behave in this time slot.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+
+   <span class="n">arma</span><span class="o">::</span><span class="n">arma_rng</span><span class="o">::</span><span class="n">set_seed_random</span><span class="p">();</span>
+
+   <span class="c1">// data parameters</span>
+   <span class="kt">size_t</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">100000</span><span class="p">;</span>
+   <span class="kt">double</span> <span class="n">ratio</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+   <span class="kt">double</span> <span class="n">speed</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">;</span>
+
+   <span class="c1">// window size</span>
+   <span class="kt">size_t</span> <span class="n">win_size</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>
+
+   <span class="c1">// data</span>
+   <span class="n">arma</span><span class="o">::</span><span class="n">mat</span> <span class="n">X</span> <span class="o">=</span> <span class="n">binormal_with_drift</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">speed</span><span class="p">);</span>
+
+   <span class="c1">// initialization</span>
+   <span class="n">StreamFolding</span> <span class="n">sf</span><span class="p">(</span><span class="n">win_size</span><span class="p">);</span>
+
+   <span class="c1">// temp or side variables</span>
+   <span class="kt">double</span> <span class="n">p</span><span class="p">;</span>
+   <span class="kt">double</span> <span class="n">Phi</span><span class="p">;</span>
+   <span class="kt">bool</span> <span class="n">u</span><span class="p">;</span>
+   <span class="k">auto</span> <span class="n">mod</span> <span class="o">=</span> <span class="p">(</span><span class="kt">size_t</span><span class="p">)</span> <span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="mi">50</span><span class="p">);</span>
+
+   <span class="k">const</span> <span class="kt">int</span> <span class="n">wi</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+   <span class="k">const</span> <span class="kt">int</span> <span class="n">wphi</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+   <span class="k">const</span> <span class="kt">int</span> <span class="n">wp</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+
+   <span class="c1">// Printing the results header</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">right</span><span class="p">;</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wi</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Iteration"</span><span class="p">;</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wphi</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Phi"</span><span class="p">;</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"p-value"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="sc">'-'</span><span class="p">);</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wi</span> <span class="o">+</span> <span class="n">wphi</span> <span class="o">+</span> <span class="n">wp</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'-'</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="sc">' '</span><span class="p">);</span>
+
+   <span class="c1">// loop over the observations</span>
+   <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">sf</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+
+      <span class="c1">// breakpoint to perform the test</span>
+      <span class="k">if</span> <span class="p">((</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">mod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+         <span class="c1">// compute the test!</span>
+         <span class="n">Phi</span> <span class="o">=</span> <span class="n">sf</span><span class="p">.</span><span class="n">folding_test</span><span class="p">(</span><span class="o">&amp;</span><span class="n">u</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
+
+         <span class="c1">// printing stuff</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setprecision</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wi</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">;</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wphi</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">Phi</span><span class="p">;</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">scientific</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We compile it as before. The execution result may look like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Iteration     Phi     p-value
+<span class="nt">-----------------------------</span>
+     5000  1.4418  0.0000e+00
+    10000  1.4753  0.0000e+00
+    15000  1.3866  0.0000e+00
+    20000  1.3149  9.0961e-13
+    25000  1.1633  1.5735e-06
+    30000  1.0396  3.3863e-01
+    35000  0.9137  9.2496e-03
+    40000  0.7511  9.7316e-11
+    45000  0.6506  9.0961e-13
+    50000  0.5474  0.0000e+00
+    55000  0.4672  0.0000e+00
+    60000  0.3944  0.0000e+00
+    65000  0.3341  0.0000e+00
+    70000  0.3111  0.0000e+00
+    75000  0.2662  0.0000e+00
+    80000  0.2470  0.0000e+00
+    85000  0.2263  0.0000e+00
+    90000  0.1865  0.0000e+00
+    95000  0.1765  0.0000e+00
+</code></pre></div></div>
+
+<p>Obviously, the folding statistics (<code class="language-c++ highlighter-rouge"><span class="n">Phi</span></code>) decreases over time (unimodal -&gt; multimodal).</p>
+
+<p>The modality change occurs around iteration 30000: as the speed is set to $10^{-4}$, it means that the second mode is centered at $x=3$ at this time. Actually, this moment visually corresponds to the modes split.</p>
+
+<p>Close to 1 the output of the test is naturally less significant (higher p-value).</p>
 
 			</div>
 		</div>
 		<div class="homeright">
-			<li><a title="Home" href="/ftu/">
+			<li><a title="Home" href="/libfolding/">
 	<i class="fas fa-home"></i></a>
 </li>
-<li><a href="/ftu/unimodality-testing" 
+<li><a href="/libfolding/unimodality-testing" 
 	title="About FTU"
 	style="position:relative;top:0;left:0; width:100%; height:100%; display:block;"><svg viewBox="-10 -20 120 120" preserveAspectRatio="xMidYMid meet" >
 		<path fill="none" d=" 
@@ -225,16 +364,16 @@ L 100.00,70.00
 </svg>
 </a></li>
 
-<li><a href="/ftu/cpp" title="C++ library">
+<li><a href="/libfolding/cpp" title="C++ library">
 	C++</a></li>
 
-<li><a href="/ftu/python" title="Python3 wrapper">
+<li><a href="/libfolding/python" title="Python3 wrapper">
 	<i class="fab fa-python"></i></a></li>
 
-<li><a href="/ftu/R" title="R package" >
+<li><a href="/libfolding/R" title="R package" >
 	R</a></li>
 
-<li><a href="/ftu/about" title="About" >
+<li><a href="/libfolding/about" title="About" >
 	&middot;&middot;&middot;</a></li>
 
 

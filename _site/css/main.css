@@ -54,6 +54,8 @@ $header: $main;*/
     color: #2980b9; }
   .highlight pre code .c1 {
     color: #8E8D8A; }
+  .highlight pre code .cm {
+    color: #52be80; }
 
 #page {
   margin: 0 auto;
