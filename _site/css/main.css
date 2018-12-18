@@ -29,6 +29,17 @@ $afblue: #5D8AA8;
 $light: #E7EDF4;
 $header2:  #1D1425;
 $header: $main;*/
+.language-R.highlighter-rouge pre code {
+  background-color: #282828;
+  color: #EAE7DC;
+  /*.o {
+      color: $color-myw-3;
+  }*/ }
+  .language-R.highlighter-rouge pre code .n {
+    color: #77C9D4; }
+  .language-R.highlighter-rouge pre code .s2 {
+    color: #E85A4F; }
+
 .language-bash.highlighter-rouge pre code {
   background-color: #282828;
   color: #EAE7DC;
@@ -133,7 +144,7 @@ ul {
 ul li::before {
   content: "\25AA";
   margin-right: 0.3em;
-  color: #ad9d85; }
+  color: #282828; }
 
 ul ul li::before {
   content: "\00B7"; }
@@ -198,9 +209,10 @@ ul ul li::before {
 
 .homeleft .top .pagetitle {
   float: left;
+  margin: 0;
   margin-top: 0.14em;
   padding-left: 0.5em;
-  width: calc(100% - 3em - $icon-size);
+  width: calc(100% - 4em - $icon-size);
   font-size: 2em;
   font-family: 'Lato';
   font-weight: Bold;
@@ -238,7 +250,7 @@ code {
 
 .homeleft .content {
   float: left;
-  width: auto;
+  width: calc(60% - 20vh);
   margin-left: 20%;
   margin-right: calc(20% + 20vh);
   margin-bottom: 10%;

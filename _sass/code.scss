@@ -1,3 +1,21 @@
+.language-R.highlighter-rouge {
+    
+    pre code {
+        background-color: $color-fg;
+        color: $color-bg;
+        /*.o {
+            color: $color-myw-3;
+        }*/
+        .n {
+            color: $color-feather;
+        }
+        .s2 {
+            color: $color-focus-light;
+        }
+    }
+}
+
+
 .language-bash.highlighter-rouge {
     
     pre code {
@@ -39,3 +57,6 @@
         color:  #52be80 ;
     }
 }
+
+
+

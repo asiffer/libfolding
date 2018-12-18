@@ -96,7 +96,7 @@ ul {
 ul li::before {
 	content: "\25AA";
 	margin-right: 0.3em;
-	color: $color-dark;
+	color: $color-matte;
 }
 ul ul li::before {
 	content: "\00B7";
@@ -173,9 +173,10 @@ ul ul li::before {
 
 .homeleft .top .pagetitle {
 	float: left;
+	margin: 0;
 	margin-top: 0.14em;
 	padding-left: 0.5em;
-	width: calc(100% - 3em - $icon-size);
+	width: calc(100% - 4em - $icon-size);
 	font-size: 2em;
 	font-family: 'Lato';
 	font-weight: Bold;
@@ -222,7 +223,7 @@ code {
 
 .homeleft .content {
 	float: left;
-	width: auto;
+	width: calc(60% - 20vh);
 	margin-left: 20%;
 	margin-right: calc(20% + 20vh);
 	margin-bottom: 10%;

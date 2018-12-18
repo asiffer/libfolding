@@ -40,9 +40,86 @@
 				</div>
 			</div>
 			<div class="content">
-				<h3 id="information">Information</h3>
+				<h2 id="introduction">Introduction</h2>
 
-<p>Details about the <code class="language-c++ highlighter-rouge"><span class="n">R</span></code> package will be soon available.</p>
+<p>The Folding Test of Unimodality remains a statistical tool, so making a <code class="language-c++ highlighter-rouge"><span class="n">R</span></code> implementation seemed relevant for us.</p>
+
+<p>Our package <code class="language-c++ highlighter-rouge"><span class="n">Rfolding</span></code> has been published on <a href="https://cran.r-project.org/web/packages/Rfolding/index.html">CRAN</a> on september 2018. Henceforth developpers to get and use it more easily!</p>
+
+<h2 id="installation">Installation</h2>
+
+<h3 id="rstudio">RStudio</h3>
+
+<p>Most of the <code class="language-c++ highlighter-rouge"><span class="n">R</span></code> developpers are likely to work with <a href="https://www.rstudio.com">RStudio</a>. Thanks to its toolbox you can quickly download the package.</p>
+
+<div style="width: 100%; float: left; margin-bottom: 1em;">
+<img src="assets/rstudio.png" alt="?" style="float: left; width:62%;" />
+<img src="assets/rstudio2.png" alt="?" style="float: right; width:35%; border: solid; border-radius:5px; border-width: 1px; margin-top: 1em;" />
+</div>
+
+<h3 id="r-console">R console</h3>
+
+<p>On R console you can also install it through the following command</p>
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">install.packages</span><span class="p">(</span><span class="s2">"Rfolding"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="getting-started">Getting started</h2>
+
+<p>The <code class="language-c++ highlighter-rouge"><span class="n">R</span></code> package is quite lightweight but embeds everything to perform the FTU on a dataset. The main the function is the following:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">folding.test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>It needs a $n\times d$ matrix ($n$ observations in dimension $d$) as input and returns 3 elements:</p>
+
+<p>-<code class="language-c++ highlighter-rouge"><span class="n">unimodal</span></code> (TRUE or FALSE): the output of the test</p>
+
+<p>-<code class="language-c++ highlighter-rouge"><span class="n">pvalue</span></code> (float): the significance of the test</p>
+
+<p>-<code class="language-c++ highlighter-rouge"><span class="n">Phi</span></code> (float): the folding statistics</p>
+
+<p>A basic example is given below</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10000</span><span class="w"> </span><span class="c1"># number of observations</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="c1"># dimension</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="c1"># mean</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="c1"># covariance matrix</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mvrnorm</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mu</span><span class="p">,</span><span class="w"> </span><span class="n">Sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigma</span><span class="p">)</span><span class="w"> </span><span class="c1"># Random sample from multivariate gaussian distribution</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">folding.test</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w"> </span><span class="c1"># perform the test</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="c1"># output</span><span class="w">
+</span><span class="o">$</span><span class="n">unimodal</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="kc">TRUE</span><span class="w">
+
+</span><span class="o">$</span><span class="n">pvalue</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">0.0001220703</span><span class="w">
+
+</span><span class="o">$</span><span class="n">Phi</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">3.07955</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This function does everything but you can do the same thing step-by-step. First you can compute only the folding statistics</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">Phi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">folding.statistics</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Phi</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">3.07955</span><span class="w">
+</span></code></pre></div></div>
+
+<p>We naturally notice that $\Phi&gt;1$ so the distribution is rather unimodal (of course, it is drawn from the normal law!). Then, with $\Phi, n$ and $d$ we can compute the p-value:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">pvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">folding.test.pvalue</span><span class="p">(</span><span class="n">Phi</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pvalue</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">0.0001220703</span><span class="w">
+</span></code></pre></div></div>
+
+<p>If you want to investigate deeper, you can also compute the folding pivot through the function <code class="language-c++ highlighter-rouge"><span class="n">pivot</span><span class="p">.</span><span class="n">approx</span></code>.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">S</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pivot.approx</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">S</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">-0.022377052</span><span class="w">  </span><span class="m">0.036734302</span><span class="w">  </span><span class="m">0.009282583</span><span class="w">
+</span></code></pre></div></div>
+
+<p>In this case we notice that the pivot is quite close to the mode. This phenomenon commonly occurs in the unimodal case.</p>
+
 
 			</div>
 		</div>
