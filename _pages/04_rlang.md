@@ -8,7 +8,7 @@ permalink: /R
 
 The Folding Test of Unimodality remains a statistical tool, so making a `R` implementation seemed relevant for us.
 
-Our package `Rfolding` has been published on [CRAN](https://cran.r-project.org/web/packages/Rfolding/index.html) on september 2018. Henceforth developpers to get and use it more easily!
+Our package `Rfolding` has been published on [CRAN](https://cran.r-project.org/web/packages/Rfolding/index.html) on september 2018. Henceforth developpers can get and use it more easily!
 
 ## Installation
 
@@ -30,7 +30,7 @@ On R console you can also install it through the following command
 
 ## Getting started
 
-The `R` package is quite lightweight but embeds everything to perform the FTU on a dataset. The main the function is the following:
+The `R` package is quite lightweight but embeds everything to perform the FTU on a dataset. The main function is the following:
 
 ```R
 folding.test <- function(X)
