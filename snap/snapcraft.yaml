@@ -1,0 +1,20 @@
+name: libfolding
+version: '1.1'
+summary: A C++ library to compute the folding test of unimodality over streaming data
+description: |
+  libfolding implements the folding test of unimodality FTU. It can be used either
+  statically on a dataset, or dynamically in a sliding window.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  libfolding:
+    plugin: make
+    source-type: git
+    source: https://github.com/asiffer/libfolding.git
+    build-packages:
+      - g++
+      - make
+      - libarmadillo-dev
+      - libarmadillo9
