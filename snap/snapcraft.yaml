@@ -17,4 +17,3 @@ parts:
       - g++
       - make
       - libarmadillo-dev
-      - libarmadillo
