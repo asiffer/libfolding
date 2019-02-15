@@ -1,4 +1,4 @@
-# libfolding
+# libfolding [![Snap Status](https://build.snapcraft.io/badge/asiffer/libfolding.svg)](https://build.snapcraft.io/user/asiffer/libfolding)
 
 ### Introduction
 `libfolding` is a `C++` library which implements the **folding test of unimodality** (FTU). 
