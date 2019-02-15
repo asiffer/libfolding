@@ -1,4 +1,4 @@
-libfolding (1.1) UNRELEASED; urgency=medium
+libfolding (1.1) cosmic; urgency=medium
 
   [ asr ]
   * new tests
@@ -18,7 +18,10 @@ libfolding (1.1) UNRELEASED; urgency=medium
   * snap badge
   * before release tag
 
- -- asr <asr@PORT-120>  Fri, 15 Feb 2019 11:16:01 +0100
+  [ asr ]
+  * UNRELEASED
+
+ -- asr <asr@PORT-120>  Fri, 15 Feb 2019 11:19:02 +0100
 
 libfolding (1.1) unstable; urgency=medium
 
