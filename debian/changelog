@@ -1,3 +1,25 @@
+libfolding (1.1) UNRELEASED; urgency=medium
+
+  [ asr ]
+  * new tests
+  * towards git+launchpad
+  * towards git+launchpad
+  * towards git+launchpad
+  * towards git+launchpad
+  * include launchpad
+  * update debian folder
+
+  [ Alban Siffer ]
+  * add publi
+  * change dependency libarmadillo8 -> libarmadillo9
+  * add snap
+  * add snap libarmadillo9 -> libarmadillo
+  * only libarmadillo-dev in requested packages
+  * snap badge
+  * before release tag
+
+ -- asr <asr@PORT-120>  Fri, 15 Feb 2019 11:16:01 +0100
+
 libfolding (1.1) unstable; urgency=medium
 
   * Team upload.
