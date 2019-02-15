@@ -5,10 +5,10 @@ Version: 1.1
 Auto-Built-Package: debug-symbols
 Architecture: amd64
 Maintainer: asr <alban.siffer@irisa.fr>
-Installed-Size: 106
+Installed-Size: 108
 Depends: libfolding (= 1.1)
 Section: debug
 Priority: optional
 Multi-Arch: same
 Description: debug symbols for libfolding
-Build-Ids: 0d4a4f062a693dec2b076c539ec9918817934410
+Build-Ids: 58df3e2bf9f4e36c591fa0ba96664d15f0a206cd
