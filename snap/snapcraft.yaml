@@ -5,8 +5,10 @@ description: |
   libfolding implements the folding test of unimodality FTU. It can be used either
   statically on a dataset, or dynamically in a sliding window.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+
 
 parts:
   libfolding:
@@ -17,3 +19,6 @@ parts:
       - g++
       - make
       - libarmadillo-dev
+
+
+
