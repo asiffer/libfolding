@@ -72,17 +72,19 @@ void sf_dump(StreamFolding *sf, double *output) {
 
 
 void
-batch_folding_test(double *array_ptr, size_t n, size_t p, double *s2star, bool *unimodal, double *pval, double *Phi, long int *usec) {
-    arma::mat M(array_ptr, n, p, false);
+batch_folding_test(double *array_ptr, size_t d, size_t n, double *s2star, bool *unimodal, double *pval, double *Phi, long int *usec) {
+    arma::mat M(array_ptr, d, n, false);
+    
     BatchFolding bf(M);
     *unimodal = bf.unimodal;
     *pval = bf.p_value;
     *Phi = bf.Phi;
     *usec = bf.usec;
     
-    for (size_t i = 0; i < p; i++) {
+    for (size_t i = 0; i < d; i++) {
         s2star[i] = bf.s2star(i);
     }
+
 }
 
 }

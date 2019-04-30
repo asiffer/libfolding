@@ -25,6 +25,7 @@ BatchFolding::BatchFolding(arma::mat X) {
     arma::rowvec X_square_norm = arma::sum(arma::square(X), 0);  // |X|²
     arma::mat mat_cov = arma::cov(X.t());
     double trace = arma::trace(mat_cov);  // Tr(cov(X))
+
     arma::vec cov_norm = arma::cov(X.t(), X_square_norm.t());  // cov(X,|X|²)
     arma::vec pivot = 0.5 * arma::solve(mat_cov, cov_norm);  // 0.5 * cov(X)^{-1} * cov(X,|X|²)
     arma::rowvec X_reduced = arma::sqrt(arma::sum(arma::square(X.each_col() - pivot), 0));  // |X-s*|
